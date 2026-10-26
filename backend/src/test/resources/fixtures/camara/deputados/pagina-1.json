@@ -1,0 +1,36 @@
+{
+  "dados": [
+    {
+      "id": 101,
+      "uri": "https://dadosabertos.camara.leg.br/api/v2/deputados/101",
+      "nome": "Pessoa Alfa",
+      "siglaPartido": "AAA",
+      "uriPartido": "https://dadosabertos.camara.leg.br/api/v2/partidos/1",
+      "siglaUf": "SP",
+      "idLegislatura": 57,
+      "urlFoto": "https://exemplo.test/101.jpg",
+      "email": "alfa@exemplo.test"
+    },
+    {
+      "id": 102,
+      "uri": "https://dadosabertos.camara.leg.br/api/v2/deputados/102",
+      "nome": "Pessoa Beta",
+      "siglaPartido": "BBB",
+      "uriPartido": "https://dadosabertos.camara.leg.br/api/v2/partidos/2",
+      "siglaUf": "RJ",
+      "idLegislatura": 57,
+      "urlFoto": "https://exemplo.test/102.jpg",
+      "email": "beta@exemplo.test"
+    }
+  ],
+  "links": [
+    {
+      "rel": "self",
+      "href": "https://dadosabertos.camara.leg.br/api/v2/deputados?itens=100&ordem=asc&ordenarPor=id"
+    },
+    {
+      "rel": "next",
+      "href": "https://dadosabertos.camara.leg.br/api/v2/deputados?ordem=asc&ordenarPor=id&pagina=2&itens=100"
+    }
+  ]
+}

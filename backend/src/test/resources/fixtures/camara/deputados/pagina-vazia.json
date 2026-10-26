@@ -1,0 +1,13 @@
+{
+  "dados": [],
+  "links": [
+    {
+      "rel": "self",
+      "href": "https://dadosabertos.camara.leg.br/api/v2/deputados?ordem=asc&ordenarPor=id&pagina=3&itens=100"
+    },
+    {
+      "rel": "next",
+      "href": "https://dadosabertos.camara.leg.br/api/v2/deputados?pagina=4&itens=100"
+    }
+  ]
+}

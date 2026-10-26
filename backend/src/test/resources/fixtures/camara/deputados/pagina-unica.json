@@ -1,0 +1,17 @@
+{
+  "dados": [
+    {
+      "id": 201,
+      "nome": "Pessoa Unica",
+      "siglaPartido": "DDD",
+      "siglaUf": "BA",
+      "idLegislatura": 57
+    }
+  ],
+  "links": [
+    {
+      "rel": "self",
+      "href": "https://dadosabertos.camara.leg.br/api/v2/deputados?itens=100&ordem=asc&ordenarPor=id"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "dados": [
+    {
+      "id": 102,
+      "uri": "https://dadosabertos.camara.leg.br/api/v2/deputados/102",
+      "nome": "Pessoa Beta Repetida",
+      "siglaPartido": "BBB",
+      "siglaUf": "RJ",
+      "idLegislatura": 57
+    },
+    {
+      "id": 103,
+      "uri": "https://dadosabertos.camara.leg.br/api/v2/deputados/103",
+      "nome": "Pessoa Gama",
+      "siglaPartido": "CCC",
+      "siglaUf": "MG",
+      "idLegislatura": 57
+    }
+  ],
+  "links": [
+    {
+      "rel": "self",
+      "href": "https://dadosabertos.camara.leg.br/api/v2/deputados?ordem=asc&ordenarPor=id&pagina=2&itens=100"
+    },
+    {
+      "rel": "next",
+      "href": "https://dadosabertos.camara.leg.br/api/v2/deputados?ordem=asc&ordenarPor=id&pagina=3&itens=100"
+    }
+  ]
+}
