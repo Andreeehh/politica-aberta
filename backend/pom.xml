@@ -15,25 +15,54 @@
     <artifactId>politica-aberta-backend</artifactId>
     <version>0.1.0-SNAPSHOT</version>
     <name>Politica Aberta</name>
-    <description>Aplicacao Spring Boot minima. O cliente da Camara continua sem banco e sem API propria.</description>
+    <description>Aplicacao Spring Boot. Expoe GET /api/health, aplica Flyway no PostgreSQL e mantem o cliente da Camara.</description>
 
     <properties>
         <java.version>21</java.version>
+        <!--
+          O BOM 3.5.7 traz Testcontainers 1.21.3, que sonda a API Docker 1.32.
+          Daemons que exigem API 1.40 ou mais recusam essa sonda. 1.21.4 tenta
+          a API 1.44 antes. Continua na linha 1.21, so no perfil banco.
+        -->
+        <testcontainers.version>1.21.4</testcontainers.version>
     </properties>
 
     <!--
       Spring Boot 3.5.7: linha estavel que ainda gerencia Jackson 2,
       o mesmo pacote usado pelo cliente de deputados. Boot 4 padroniza
       Jackson 3 e exigiria trocar o cliente nesta etapa.
-      spring-boot-starter nao abre porta HTTP nem liga banco.
-      spring-boot-starter-test so entra nos testes do contexto.
-      jackson-databind permanece explicito porque o cliente le JSON
-      fora dos conversores do Spring.
+      spring-boot-starter-web abre o servidor HTTP.
+      spring-boot-starter-jdbc, o driver PostgreSQL e os modulos Flyway
+      vem do BOM 3.5.7: Flyway 11.7.2 e PostgreSQL JDBC 42.7.8.
+      Flyway 11 exige flyway-database-postgresql alem do flyway-core.
+      Nao ha JPA. jackson-databind permanece explicito porque o cliente
+      le JSON fora dos conversores do Spring.
     -->
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jdbc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-database-postgresql</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -42,6 +71,25 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!--
+          So o perfil banco. O mvn test padrao exclui *IT.java e nao sobe Docker.
+          A versao 1.21.4 esta declarada acima por causa da API Docker.
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-testcontainers</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>postgresql</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -56,7 +104,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <!-- *IT.java fala com a API real e fica fora de mvn test e do package. -->
+                    <!-- *IT.java fica fora de mvn test e do package. Perfis proprios incluem cada um. -->
                     <excludes>
                         <exclude>**/*IT.java</exclude>
                     </excludes>
@@ -76,6 +124,23 @@
                         <configuration combine.self="override">
                             <includes>
                                 <include>**/ClienteDeputadosCamaraIT.java</include>
+                            </includes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>banco</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration combine.self="override">
+                            <includes>
+                                <include>**/DeputadoRepositorioIT.java</include>
+                                <include>**/ExecucaoImportacaoRepositorioIT.java</include>
                             </includes>
                         </configuration>
                     </plugin>

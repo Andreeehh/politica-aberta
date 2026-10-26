@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Consumer;
 
 /**
  * Le {@code GET /deputados} pagina a pagina.
@@ -34,6 +35,16 @@ public final class ClienteDeputadosCamara {
 
     public ResultadoListaDeputados listar() {
         List<DeputadoEmLista> acumulado = new ArrayList<>();
+        Long total = percorrer(acumulado::add);
+        return new ResultadoListaDeputados(acumulado, total);
+    }
+
+    /**
+     * Entrega cada deputado unico assim que a pagina dele e lida.
+     * A pagina seguinte so e pedida depois. O total segue a mesma regra de {@link #listar()}.
+     */
+    public Long percorrer(Consumer<DeputadoEmLista> visitante) {
+        Objects.requireNonNull(visitante, "visitante");
         Set<Long> ids = new HashSet<>();
         Set<URI> visitadas = new HashSet<>();
         Long total = null;
@@ -59,12 +70,12 @@ public final class ClienteDeputadosCamara {
             }
             for (DeputadoEmLista deputado : pagina.deputados()) {
                 if (ids.add(deputado.id())) {
-                    acumulado.add(deputado);
+                    visitante.accept(deputado);
                 }
             }
             atual = pagina.proxima();
         }
-        return new ResultadoListaDeputados(acumulado, total);
+        return total;
     }
 
     private RespostaHttp pedir(URI uri) {

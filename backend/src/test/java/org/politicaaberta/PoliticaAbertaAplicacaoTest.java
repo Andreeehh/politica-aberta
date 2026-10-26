@@ -11,7 +11,13 @@ import javax.sql.DataSource;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-@SpringBootTest
+// A suite padrao nao abre PostgreSQL. A aplicacao real exige o banco.
+@SpringBootTest(properties = {
+        "politica-aberta.banco=false",
+        "spring.autoconfigure.exclude="
+                + "org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration,"
+                + "org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration"
+})
 class PoliticaAbertaAplicacaoTest {
 
     @Autowired

@@ -13,7 +13,7 @@ flowchart LR
     subgraph Backend [Backend Spring Boot - monólito modular]
         API[Camada web] --> App[Casos de uso]
         App --> Dom[Domínio]
-        App --> Infra[Persistência JPA]
+        App --> Infra[Persistência]
         Imp[Importação agendada] --> App
     end
     Infra --> DB[(PostgreSQL)]
@@ -46,25 +46,29 @@ Os módulos são pacotes Java dentro de um único artefato. Regras:
 ## Estrutura prevista do repositório
 
 ```
-backend/    Maven, Spring Boot
-frontend/   Vite, React, TypeScript
+backend/             Maven, Spring Boot
+frontend/            Vite, React, TypeScript
 docs/
-docker-compose.yml (Fase 1)
+docker-compose.yml   PostgreSQL 17.11 para desenvolvimento local
+.env.example         Variáveis locais de exemplo; .env fica fora do Git
 ```
 
 ## Dados
 
 - PostgreSQL como fonte única de verdade da aplicação; migrações com Flyway.
 - Cada registro importado guarda identificador oficial, URL de origem e data de importação.
+- A tabela `deputado` usa JDBC, não JPA. A chave primária é o id oficial da Câmara. Detalhe em [ADR 0003](../decisions/0003-persistencia-de-deputados.md).
 - O frontend consome apenas a API própria, nunca as APIs oficiais diretamente.
 
 ## Importação
 
 Ver [ADR 0002](../decisions/0002-estrategia-de-importacao.md).
 
+A importação de deputados é explícita, síncrona e sem agendamento. Cada execução grava uma linha em `execucao_importacao` antes das requisições HTTP. O deputado é persistido página a página. Uma falha no meio não apaga o que já entrou e não marca a execução como concluída. O índice único de execução `em_execucao` impede duas coletas do mesmo tipo ao mesmo tempo. `POST /api/admin/importacoes/deputados` não tem autenticação.
+
 ## Qualidade e CI
 
-- Testes JUnit; integração com PostgreSQL real (Testcontainers, a confirmar).
+- Testes JUnit. O `mvn test` padrão não abre PostgreSQL nem Docker. O repositório de deputados tem integração com PostgreSQL 17.11 via Testcontainers, só no perfil Maven `banco`.
 - GitHub Actions: build e testes de backend e frontend em PRs.
 
 ## Segurança e privacidade

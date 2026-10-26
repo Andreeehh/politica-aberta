@@ -409,7 +409,7 @@ Não gerar entidade JPA nesta etapa. O teste de contrato compara a fixture com o
 
 ### Implementado em 2026-10-26
 
-`ClienteDeputadosCamara` em `backend/`. A paginação não mudou. A aplicação Spring Boot 3.5.7 em Java 21 só registra esse cliente no contexto; a subida não coleta e não abre banco. Jackson continua no cliente porque o JDK não lê JSON.
+`ClienteDeputadosCamara` em `backend/`. A paginação não mudou. A aplicação Spring Boot 3.5.7 em Java 21 registra o cliente e só chama a Câmara quando alguém dispara `POST /api/admin/importacoes/deputados`. O cliente continua sem espera por `Retry-After` em resposta `200`. Jackson continua no cliente porque o JDK não lê JSON.
 
 Comportamento do código, coberto por fixture local:
 
